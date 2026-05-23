@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suuq.DJ — Marketplace N°1 à Djibouti</title>
+<meta name="description" content="Suuq.DJ — La première marketplace djiboutienne. Achetez, vendez, échangez à Djibouti. Publication 100% gratuite !">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#E8401A;--primary-dark:#C43010;
+  --gold:#F5A623;--gold-light:#FFD580;
+  --dark:#1A1208;--dark2:#2D2010;
+  --surface:#FFFAF5;--surface2:#FFF3E8;
+  --text:#1A1208;--text2:#5C4A2A;--text3:#9A8060;
+  --border:#E8D5B8;--border2:#F0E0C8;
+  --success:#2E7D32;--white:#fff;--wa:#25D366;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--surface);color:var(--text);overflow-x:hidden;line-height:1.5}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'Outfit',sans-serif}
+input,select,textarea{font-family:'Outfit',sans-serif}
+
+/* HEADER TOP */
+.header-top{background:var(--primary);padding:5px 16px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.95)}
+.header-top-links{display:flex;gap:14px}
+.header-top-links a{color:rgba(255,255,255,.85);cursor:pointer;transition:color .2s}
+.header-top-links a:hover{color:#fff;text-decoration:underline}
+
+/* HEADER */
+.header-wrap{background:var(--dark);position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(0,0,0,.5)}
+.header-main{max-width:1400px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.logo-icon{width:40px;height:40px;background:var(--primary);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;font-family:'Tajawal',sans-serif}
+.logo-text{font-size:24px;font-weight:900;color:#fff;font-family:'Tajawal',sans-serif;letter-spacing:-.5px}
+.logo-text span{color:var(--gold)}
+.search-bar{flex:1;display:flex;background:#fff;border-radius:9px;overflow:hidden;border:2px solid var(--gold);min-width:0}
+.search-bar input{flex:1;padding:9px 14px;border:none;outline:none;font-size:14px;color:var(--text);min-width:0}
+.search-bar select{padding:7px 10px;border:none;border-left:1px solid var(--border);outline:none;font-size:12px;color:var(--text2);background:#FFF8F0}
+.search-btn{padding:9px 16px;background:var(--primary);color:#fff;border:none;font-weight:600;font-size:14px;transition:background .2s;white-space:nowrap}
+.search-btn:hover{background:var(--primary-dark)}
+.header-actions{display:flex;gap:8px;flex-shrink:0}
+.btn-login{background:transparent;color:#fff;padding:8px 14px;border-radius:8px;font-weight:500;font-size:13px;border:1px solid rgba(255,255,255,.3);transition:all .2s}
+.btn-login:hover{background:rgba(255,255,255,.1)}
+.btn-post{background:var(--gold);color:var(--dark);padding:8px 16px;border-radius:8px;font-weight:700;font-size:13px;border:none;transition:all .2s}
+.btn-post:hover{background:var(--gold-light);transform:translateY(-1px)}
+
+/* FREE BANNER */
+.free-banner{background:linear-gradient(90deg,#166010,#228B22,#166010);padding:8px 16px;text-align:center;font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.free-tag{background:rgba(255,255,255,.25);padding:2px 10px;border-radius:12px;font-size:12px;font-weight:700}
+
+/* NAV */
+nav{background:var(--dark2);border-bottom:3px solid var(--primary)}
+.nav-inner{max-width:1400px;margin:0 auto;padding:0 16px;display:flex;overflow-x:auto;scrollbar-width:none}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-item{display:flex;align-items:center;gap:5px;padding:10px 14px;color:rgba(255,255,255,.75);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;border-bottom:3px solid transparent;margin-bottom:-3px;user-select:none}
+.nav-item:hover,.nav-item.active{color:#fff;border-bottom-color:var(--gold)}
+
+/* HERO AD */
+.hero-ad{background:linear-gradient(135deg,#1A1208,#3D2010,#1A1208);padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;border-bottom:2px solid var(--gold)}
+.ad-pub-tag{background:var(--primary);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:1px;flex-shrink:0}
+.hero-ad-text h2{font-size:15px;font-weight:800;color:#fff;font-family:'Tajawal',sans-serif}
+.hero-ad-text h2 span{color:var(--gold)}
+.hero-ad-text p{font-size:11px;color:rgba(255,255,255,.6)}
+.btn-hero-ad{background:var(--gold);color:var(--dark);padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;border:none;flex-shrink:0;transition:all .2s}
+.btn-hero-ad:hover{background:var(--gold-light)}
+
+/* LAYOUT */
+.main-layout{max-width:1400px;margin:0 auto;padding:16px;display:grid;grid-template-columns:220px 1fr 200px;gap:18px}
+
+/* SIDEBAR */
+.sidebar-box{background:var(--white);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.sidebar-title{background:var(--primary);color:#fff;padding:10px 14px;font-size:13px;font-weight:700}
+.sidebar-title.gold{background:var(--gold);color:var(--dark)}
+.cat-item{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;font-size:13px;color:var(--text2);cursor:pointer;border-bottom:1px solid var(--border2);transition:all .15s;user-select:none}
+.cat-item:last-child{border-bottom:none}
+.cat-item:hover{background:var(--surface2);color:var(--primary)}
+.cat-left{display:flex;align-items:center;gap:8px}
+.cat-count{background:var(--surface2);color:var(--text3);font-size:11px;padding:2px 7px;border-radius:10px;font-weight:600;transition:all .15s}
+.cat-item:hover .cat-count{background:var(--primary);color:#fff}
+.sidebar-ad{background:var(--dark);border-radius:12px;overflow:hidden;border:2px solid var(--gold);margin-bottom:14px}
+.sad-top{background:var(--gold);padding:5px 10px;font-size:10px;font-weight:700;color:var(--dark);text-align:center;letter-spacing:1px}
+.sad-top.red{background:var(--primary);color:#fff}
+.sad-body{padding:14px;text-align:center}
+.sad-emoji{font-size:32px;display:block;margin-bottom:7px}
+.sad-body h3{font-size:14px;font-weight:700;color:#fff;font-family:'Tajawal',sans-serif;margin-bottom:4px}
+.sad-body p{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:10px;line-height:1.5}
+.btn-sad{background:var(--primary);color:#fff;border:none;padding:8px 0;border-radius:6px;font-size:12px;font-weight:600;width:100%;transition:background .2s}
+.btn-sad:hover{background:var(--primary-dark)}
+.btn-sad.gold{background:var(--gold);color:var(--dark)}
+.btn-sad.gold:hover{background:var(--gold-light)}
+.price-inputs{padding:12px}
+.price-row{display:flex;gap:8px;margin-bottom:10px}
+.price-input{flex:1;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;transition:border .2s}
+.price-input:focus{border-color:var(--primary)}
+.btn-filter{width:100%;padding:8px;background:var(--primary);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700}
+.btn-filter:hover{background:var(--primary-dark)}
+
+/* CONTENT */
+.content{display:flex;flex-direction:column;gap:20px}
+
+/* CATS PILLS */
+.cats-bar{background:var(--white);border:1px solid var(--border2);border-radius:12px;padding:10px 14px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.cats-bar::-webkit-scrollbar{display:none}
+.cat-pill{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 12px;border-radius:10px;border:1px solid var(--border2);cursor:pointer;transition:all .2s;flex-shrink:0;background:var(--surface);user-select:none}
+.cat-pill:hover,.cat-pill.active{background:var(--primary);border-color:var(--primary);transform:translateY(-2px)}
+.pill-emoji{font-size:18px}
+.pill-label{font-size:11px;font-weight:600;color:var(--text2)}
+.cat-pill:hover .pill-label,.cat-pill.active .pill-label{color:#fff}
+
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-size:15px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:7px}
+.title-dot{width:7px;height:7px;background:var(--primary);border-radius:50%;flex-shrink:0}
+.see-all{font-size:12px;color:var(--primary);cursor:pointer;font-weight:500}
+.see-all:hover{text-decoration:underline}
+
+/* LISTING GRID */
+.listing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.listing-card{background:var(--white);border:1px solid var(--border2);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
+.listing-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(232,64,26,.12);border-color:var(--primary)}
+.listing-card.featured{border:2px solid var(--gold)}
+.card-badges{position:absolute;top:8px;left:8px;z-index:2;display:flex;gap:4px;flex-wrap:wrap}
+.badge{font-size:10px;font-weight:700;padding:3px 7px;border-radius:5px;letter-spacing:.3px}
+.badge.top{background:var(--primary);color:#fff}
+.badge.new{background:var(--success);color:#fff}
+.badge.hot{background:#FF6B00;color:#fff}
+.badge.urgent{background:#8B0000;color:#fff}
+.badge.gratuit{background:#888;color:#fff}
+.card-img{width:100%;height:130px;display:flex;align-items:center;justify-content:center;font-size:44px;background:linear-gradient(135deg,#F0E0C8,#E8D0B0)}
+.card-body{padding:9px 11px 11px}
+.card-price{font-size:16px;font-weight:700;color:var(--primary)}
+.card-price .cur{font-size:11px;font-weight:500;color:var(--text3)}
+.card-title{font-size:12px;font-weight:600;color:var(--text);margin:3px 0;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-loc{font-size:11px;color:var(--text3)}
+.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:7px;padding-top:7px;border-top:1px solid var(--border2)}
+.card-time{font-size:11px;color:var(--text3)}
+.card-fav{width:26px;height:26px;background:var(--surface2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;border:none;transition:all .2s}
+.card-fav:hover{background:var(--primary)}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-state div{font-size:48px;margin-bottom:12px}
+.empty-state p{font-size:14px}
+
+/* LOADING */
+.loading-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.skeleton{background:var(--border2);border-radius:12px;height:220px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* AD CARD */
+.listing-card.ad-card{background:linear-gradient(135deg,var(--dark),#3D2010);border:2px solid var(--gold)}
+.ad-card-inner{padding:18px 14px;min-height:190px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.ad-card-tag{background:var(--gold);color:var(--dark);font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;letter-spacing:1px;margin-bottom:9px}
+.ad-card-emoji{font-size:34px;margin-bottom:7px}
+.ad-card-inner h3{font-size:14px;font-weight:800;color:#fff;font-family:'Tajawal',sans-serif;margin-bottom:5px}
+.ad-card-inner p{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:10px;line-height:1.4}
+.btn-ad-card{background:var(--gold);color:var(--dark);border:none;padding:7px 16px;border-radius:7px;font-size:12px;font-weight:700;transition:background .2s}
+.btn-ad-card:hover{background:var(--gold-light)}
+
+/* PROMO BANNER */
+.promo-banner{background:linear-gradient(135deg,#2D1A08,#5C3010,#2D1A08);border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border:1px solid var(--gold)}
+.promo-left h3{font-size:16px;font-weight:900;color:#fff;font-family:'Tajawal',sans-serif}
+.promo-left h3 span{color:var(--gold)}
+.promo-left p{font-size:12px;color:rgba(255,255,255,.65);margin-top:3px}
+.promo-stats{display:flex;gap:16px;flex-shrink:0}
+.promo-stat .num{font-size:20px;font-weight:900;color:var(--gold);display:block}
+.promo-stat .lbl{font-size:11px;color:rgba(255,255,255,.55)}
+.btn-boost{background:var(--primary);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:700;font-size:13px;flex-shrink:0;transition:all .2s}
+.btn-boost:hover{background:var(--primary-dark);transform:translateY(-1px)}
+
+/* RIGHT SIDEBAR */
+.right-box{background:var(--white);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.right-box-title{padding:10px 14px;font-size:13px;font-weight:700;color:var(--text);border-bottom:1px solid var(--border2)}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid var(--border2);font-size:12px}
+.stat-row:last-child{border-bottom:none}
+.stat-row .lbl{color:var(--text2)}
+.stat-row .val{font-weight:700;color:var(--primary)}
+.right-ad{background:var(--dark);border-radius:12px;overflow:hidden;border:2px solid var(--primary);margin-bottom:14px}
+.rad-top{background:var(--primary);padding:7px 12px;font-size:10px;font-weight:700;color:#fff;text-align:center;letter-spacing:1px}
+.rad-top.gold{background:var(--gold);color:var(--dark)}
+.rad-body{padding:14px;text-align:center}
+.rad-emoji{font-size:34px;display:block;margin-bottom:7px}
+.rad-body h3{font-size:13px;font-weight:700;color:#fff;font-family:'Tajawal',sans-serif;margin-bottom:3px}
+.rad-body p{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:10px;line-height:1.4}
+.btn-rad{background:var(--gold);color:var(--dark);border:none;padding:8px 0;border-radius:7px;font-size:12px;font-weight:700;width:100%;transition:background .2s}
+.btn-rad:hover{background:var(--gold-light)}
+.tags-wrap{padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px}
+.pop-tag{background:var(--surface2);color:var(--text2);padding:4px 10px;border-radius:15px;font-size:11px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.pop-tag:hover{background:var(--primary);color:#fff}
+.alert-box{padding:12px}
+.alert-box p{font-size:12px;color:var(--text2);margin-bottom:9px;line-height:1.5}
+.alert-input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;outline:none;margin-bottom:8px;transition:border .2s}
+.alert-input:focus{border-color:var(--primary)}
+.btn-alert{width:100%;padding:8px;background:var(--primary);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;transition:background .2s}
+.btn-alert:hover{background:var(--primary-dark)}
+
+/* FOOTER */
+footer{background:var(--dark);margin-top:36px;padding:32px 16px 16px}
+.footer-inner{max-width:1400px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:28px;margin-bottom:24px}
+.footer-brand-name{font-size:26px;font-weight:900;color:#fff;font-family:'Tajawal',sans-serif}
+.footer-brand-name span{color:var(--gold)}
+.footer-brand p{font-size:12px;color:rgba(255,255,255,.4);margin-top:8px;line-height:1.7}
+.footer-apps{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.app-btn{background:rgba(255,255,255,.1);padding:6px 12px;border-radius:6px;font-size:11px;color:rgba(255,255,255,.6);cursor:pointer;border:none;transition:all .2s}
+.app-btn:hover{background:rgba(255,255,255,.2);color:#fff}
+.footer-col h4{font-size:13px;font-weight:700;color:rgba(255,255,255,.8);margin-bottom:10px}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:7px}
+.footer-col ul li a{font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;transition:color .2s}
+.footer-col ul li a:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.footer-bottom p{font-size:11px;color:rgba(255,255,255,.3)}
+.footer-monetize{font-size:11px;color:var(--gold);font-weight:600}
+
+/* WHATSAPP FLOAT */
+.wa-float{position:fixed;bottom:20px;right:20px;z-index:500;background:var(--wa);color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 20px rgba(37,211,102,.5);border:none;transition:all .2s;cursor:pointer}
+.wa-float:hover{transform:scale(1.1)}
+.wa-pulse{animation:waPulse 2s infinite}
+@keyframes waPulse{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}50%{box-shadow:0 0 0 12px rgba(37,211,102,0)}}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+.modal-overlay.show{display:flex}
+.modal{background:var(--white);border-radius:16px;padding:24px;max-width:440px;width:100%;animation:fadeUp .3s ease;margin:auto}
+.pub-modal{background:var(--white);border-radius:16px;padding:24px;max-width:500px;width:100%;animation:fadeUp .3s ease;margin:auto}
+@keyframes fadeUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal h2,.pub-modal h2{font-size:19px;font-weight:800;color:var(--text);margin-bottom:5px}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:16px}
+.modal-free-note{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:10px 14px;font-size:12px;color:#1b5e20;margin-bottom:14px;font-weight:500;line-height:1.5}
+.plan-card{border:2px solid var(--border);border-radius:10px;padding:13px;margin-bottom:9px;cursor:pointer;transition:all .2s;user-select:none;position:relative}
+.plan-card:hover,.plan-card.selected{border-color:var(--primary);background:var(--surface2)}
+.plan-card.recommended::before{content:'⭐ RECOMMANDÉ';position:absolute;top:-10px;right:10px;background:var(--gold);color:var(--dark);font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px}
+.plan-card h3{font-size:13px;font-weight:700;color:var(--text)}
+.plan-price{font-size:18px;font-weight:800;color:var(--primary);margin:3px 0}
+.plan-card p{font-size:11px;color:var(--text3);margin:0;line-height:1.4}
+.wa-pay-btn{width:100%;padding:13px;background:var(--wa);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px;transition:all .2s}
+.wa-pay-btn:hover{background:#1da851;transform:translateY(-1px)}
+.modal-cancel{width:100%;padding:10px;background:#f5f5f5;border:none;border-radius:8px;font-weight:600;font-size:14px;margin-top:8px;transition:background .2s}
+.modal-cancel:hover{background:#e8e8e8}
+
+/* PUBLISH FORM */
+.free-badge-modal{display:inline-block;background:#e8f5e9;color:#1b5e20;font-size:12px;font-weight:700;padding:3px 10px;border-radius:12px;margin-bottom:14px;border:1px solid #a5d6a7}
+.form-group{margin-bottom:13px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px}
+.form-input,.form-select,.form-textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;transition:border .2s;background:#fff;color:var(--text)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--primary)}
+.form-textarea{height:90px;resize:vertical}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.boost-option{border:2px solid var(--border2);border-radius:9px;padding:10px 12px;cursor:pointer;transition:all .2s;user-select:none;display:flex;align-items:flex-start;gap:10px;margin-bottom:7px}
+.boost-option:hover,.boost-option.selected{border-color:var(--gold);background:var(--surface2)}
+.boost-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s}
+.boost-option.selected .boost-check{background:var(--gold);border-color:var(--gold);color:#fff}
+.boost-info h4{font-size:13px;font-weight:700;color:var(--text)}
+.boost-info .bprice{font-size:15px;font-weight:800;color:var(--primary)}
+.boost-info p{font-size:11px;color:var(--text3);line-height:1.4}
+.btn-submit-free{width:100%;padding:12px;background:var(--success);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:15px;margin-top:6px;transition:all .2s}
+.btn-submit-free:hover{background:#1b5e20}
+.btn-submit-wa{width:100%;padding:12px;background:var(--wa);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:14px;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
+.btn-submit-wa:hover{background:#1da851}
+
+/* DETAIL MODAL */
+.detail-modal{background:var(--white);border-radius:16px;padding:24px;max-width:480px;width:100%;animation:fadeUp .3s ease;margin:auto}
+.detail-img{width:100%;height:200px;background:linear-gradient(135deg,#F0E0C8,#E8D0B0);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:64px;margin-bottom:16px}
+.detail-price{font-size:26px;font-weight:800;color:var(--primary);margin-bottom:4px}
+.detail-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+.detail-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.detail-badge{background:var(--surface2);color:var(--text2);padding:4px 12px;border-radius:15px;font-size:12px;font-weight:600}
+.detail-desc{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:16px}
+.btn-contact-wa{width:100%;padding:14px;background:var(--wa);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s}
+.btn-contact-wa:hover{background:#1da851}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;right:16px;background:var(--dark);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;z-index:1001;display:none;max-width:300px;animation:fadeUp .3s ease;border-left:4px solid var(--gold)}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  .main-layout{grid-template-columns:200px 1fr}
+  .right-sidebar{display:none}
+}
+@media(max-width:768px){
+  .header-top{display:none}
+  .search-bar select{display:none}
+  .main-layout{grid-template-columns:1fr;padding:10px 12px}
+  .left-sidebar{display:none}
+  .listing-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .promo-banner{flex-direction:column;text-align:center}
+  .promo-stats{justify-content:center}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .hero-ad{flex-direction:column;text-align:center;gap:8px;padding:10px 14px}
+  .loading-cards{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:480px){
+  .listing-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .btn-login{display:none}
+  .search-bar{order:3;flex:0 0 100%}
+  .logo-text{font-size:20px}
+  .form-row{grid-template-columns:1fr}
+  .loading-cards{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER TOP -->
+<div class="header-top">
+  <span>🇩🇯 La marketplace N°1 à Djibouti &nbsp;·&nbsp; <strong>Publication 100% Gratuite</strong></span>
+  <div class="header-top-links">
+    <a onclick="openWA('Bonjour, j\'ai besoin d\'aide sur Suuq.DJ')">Aide</a>
+    <a onclick="showToast('👤 Connexion bientôt disponible')">Mon compte</a>
+    <a onclick="openPublish()">Publier une annonce</a>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header-wrap">
+  <div class="header-main">
+    <div class="logo">
+      <div class="logo-icon">س</div>
+      <div class="logo-text">SUUQ<span>.DJ</span></div>
+    </div>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Que cherchez-vous ?">
+      <select id="villeFilter" onchange="loadAnnonces()">
+        <option value="">Tout Djibouti</option>
+        <option>Djibouti-Ville</option>
+        <option>Balbala</option>
+        <option>Ali Sabieh</option>
+        <option>Tadjourah</option>
+        <option>Obock</option>
+        <option>Dikhil</option>
+        <option>Arta</option>
+      </select>
+      <button class="search-btn" onclick="doSearch()">🔍</button>
+    </div>
+    <div class="header-actions">
+      <button class="btn-login" onclick="showToast('👤 Connexion bientôt disponible')">Connexion</button>
+      <button class="btn-post" onclick="openPublish()">+ Publier GRATUIT</button>
+    </div>
+  </div>
+</div>
+
+<!-- FREE BANNER -->
+<div class="free-banner">
+  ✅ Publication d'annonces <span class="free-tag">100% GRATUITE</span> &nbsp;·&nbsp; Boost à partir de <span class="free-tag">500 DJF</span>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-item active" onclick="filterCatNav(this,'')">🏠 Accueil</div>
+    <div class="nav-item" onclick="filterCatNav(this,'🚗 Véhicules')">🚗 Véhicules</div>
+    <div class="nav-item" onclick="filterCatNav(this,'🏠 Immobilier')">🏠 Immobilier</div>
+    <div class="nav-item" onclick="filterCatNav(this,'📱 Électronique')">📱 Électronique</div>
+    <div class="nav-item" onclick="filterCatNav(this,'👗 Mode & Beauté')">👗 Mode</div>
+    <div class="nav-item" onclick="filterCatNav(this,'🛋️ Maison & Jardin')">🛋️ Maison</div>
+    <div class="nav-item" onclick="filterCatNav(this,'💼 Emploi')">💼 Emploi</div>
+    <div class="nav-item" onclick="filterCatNav(this,'🐐 Animaux')">🐐 Animaux</div>
+    <div class="nav-item" onclick="filterCatNav(this,'🛠️ Services')">🛠️ Services</div>
+    <div class="nav-item" onclick="filterCatNav(this,'🫙 Alimentation')">🫙 Alimentation</div>
+    <div class="nav-item" onclick="openBoost()">⭐ TOP annonces</div>
+  </div>
+</nav>
+
+<!-- HERO AD -->
+<div class="hero-ad">
+  <span class="ad-pub-tag">PUBLICITÉ</span>
+  <div style="font-size:24px">🏦</div>
+  <div class="hero-ad-text">
+    <h2>Banque de Djibouti — <span>Crédit Express en 48h</span></h2>
+    <p>Financement auto, immobilier, projets personnels. Taux préférentiel.</p>
+  </div>
+  <button class="btn-hero-ad" onclick="openWA('Bonjour, je veux des infos sur le crédit')">En savoir plus →</button>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="left-sidebar">
+    <div class="sidebar-box">
+      <div class="sidebar-title">📂 Catégories</div>
+      <div class="cat-item" onclick="filterCatSide('🚗 Véhicules')"><div class="cat-left"><span>🚗</span> Véhicules</div><span class="cat-count" id="count-vehicules">...</span></div>
+      <div class="cat-item" onclick="filterCatSide('🏠 Immobilier')"><div class="cat-left"><span>🏠</span> Immobilier</div><span class="cat-count" id="count-immo">...</span></div>
+      <div class="cat-item" onclick="filterCatSide('📱 Électronique')"><div class="cat-left"><span>📱</span> Électronique</div><span class="cat-count" id="count-elec">...</span></div>
+      <div class="cat-item" onclick="filterCatSide('👗 Mode & Beauté')"><div class="cat-left"><span>👗</span> Mode & Beauté</div><span class="cat-count" id="count-mode">...</span></div>
+      <div class="cat-item" onclick="filterCatSide('🛋️ Maison & Jardin')"><div class="cat-left"><span>🛋️</span> Maison & Jardin</div><span class="cat-count" id="count-maison">...</span></div>
+      <div class="cat-item" onclick="filterCatSide('💼 Emploi')"><div class="cat-left"><span>💼</span> Emploi</div><span class="cat-count" id="count-emploi">...</span></div>
+      <div class="cat-item" onclick="filterCatSide('🛠️ Services')"><div class="cat-left"><span>🛠️</span> Services</div><span class="cat-count" id="count-services">...</span></div>
+      <div class="cat-item" onclick="filterCatSide('🐐 Animaux')"><div class="cat-left"><span>🐐</span> Animaux</div><span class="cat-count" id="count-animaux">...</span></div>
+      <div class="cat-item" onclick="filterCatSide('🫙 Alimentation')"><div class="cat-left"><span>🫙</span> Alimentation</div><span class="cat-count" id="count-alim">...</span></div>
+      <div class="cat-item" onclick="filterCatSide('⚽ Sport & Loisirs')"><div class="cat-left"><span>⚽</span> Sport & Loisirs</div><span class="cat-count" id="count-sport">...</span></div>
+    </div>
+    <div class="sidebar-ad">
+      <div class="sad-top">PUBLICITÉ</div>
+      <div class="sad-body">
+        <span class="sad-emoji">📦</span>
+        <h3>Dahabshiil Express</h3>
+        <p>Livraison rapide partout à Djibouti-Ville.</p>
+        <button class="btn-sad" onclick="showToast('📦 +253 77 xx xx xx')">Contacter</button>
+      </div>
+    </div>
+    <div class="sidebar-ad">
+      <div class="sad-top red">VOTRE PUB ICI</div>
+      <div class="sad-body">
+        <span class="sad-emoji">🏪</span>
+        <h3>Votre boutique ici</h3>
+        <p>Touchez +50 000 djiboutiens par mois</p>
+        <button class="btn-sad gold" onclick="openWA('Bonjour, je veux faire de la publicité sur Suuq.DJ. Quels sont vos tarifs ?')">Faire de la pub</button>
+      </div>
+    </div>
+    <div class="sidebar-box">
+      <div class="sidebar-title gold">💰 Filtrer le prix</div>
+      <div class="price-inputs">
+        <div class="price-row">
+          <input class="price-input" type="number" placeholder="Min DJF" id="priceMin">
+          <input class="price-input" type="number" placeholder="Max DJF" id="priceMax">
+        </div>
+        <button class="btn-filter" onclick="applyFilter()">Appliquer</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- Pills -->
+    <div class="cats-bar">
+      <div class="cat-pill active" onclick="setPill(this,'')"><span class="pill-emoji">✨</span><span class="pill-label">Tout</span></div>
+      <div class="cat-pill" onclick="setPill(this,'🚗 Véhicules')"><span class="pill-emoji">🚗</span><span class="pill-label">Voitures</span></div>
+      <div class="cat-pill" onclick="setPill(this,'🏠 Immobilier')"><span class="pill-emoji">🏠</span><span class="pill-label">Maisons</span></div>
+      <div class="cat-pill" onclick="setPill(this,'📱 Électronique')"><span class="pill-emoji">📱</span><span class="pill-label">Téléphones</span></div>
+      <div class="cat-pill" onclick="setPill(this,'💻 Informatique')"><span class="pill-emoji">💻</span><span class="pill-label">Ordi</span></div>
+      <div class="cat-pill" onclick="setPill(this,'👗 Mode & Beauté')"><span class="pill-emoji">👗</span><span class="pill-label">Mode</span></div>
+      <div class="cat-pill" onclick="setPill(this,'🛋️ Maison & Jardin')"><span class="pill-emoji">🛋️</span><span class="pill-label">Meubles</span></div>
+      <div class="cat-pill" onclick="setPill(this,'🐐 Animaux')"><span class="pill-emoji">🐐</span><span class="pill-label">Animaux</span></div>
+      <div class="cat-pill" onclick="setPill(this,'💼 Emploi')"><span class="pill-emoji">💼</span><span class="pill-label">Emplois</span></div>
+      <div class="cat-pill" onclick="setPill(this,'🛠️ Services')"><span class="pill-emoji">🛠️</span><span class="pill-label">Services</span></div>
+    </div>
+
+    <!-- Annonces TOP -->
+    <section>
+      <div class="section-header">
+        <div class="section-title"><span class="title-dot"></span> ⭐ Annonces TOP — Boostées</div>
+        <span class="see-all" onclick="showToast('📋 Toutes les annonces TOP')">Voir tout →</span>
+      </div>
+      <div id="topGrid">
+        <div class="loading-cards">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROMO BOOST -->
+    <div class="promo-banner">
+      <div class="promo-left">
+        <h3>Boostez votre annonce — <span>à partir de 500 DJF !</span></h3>
+        <p>Soyez en première position et recevez 10× plus de contacts</p>
+      </div>
+      <div class="promo-stats">
+        <div class="promo-stat"><span class="num" id="totalCount">...</span><span class="lbl">annonces actives</span></div>
+        <div class="promo-stat"><span class="num" id="visitorCount">1 847</span><span class="lbl">visiteurs actifs</span></div>
+      </div>
+      <button class="btn-boost" onclick="openBoost()">Booster maintenant ⚡</button>
+    </div>
+
+    <!-- Annonces récentes -->
+    <section>
+      <div class="section-header">
+        <div class="section-title"><span class="title-dot"></span> 🕐 Annonces Récentes</div>
+        <span class="see-all" onclick="showToast('📋 Toutes les annonces récentes')">Voir tout →</span>
+      </div>
+      <div id="recentGrid">
+        <div class="loading-cards">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="right-sidebar" style="display:flex;flex-direction:column">
+    <div class="right-box">
+      <div class="right-box-title">📊 En direct</div>
+      <div class="stat-row"><span class="lbl">Annonces actives</span><span class="val" id="statTotal">...</span></div>
+      <div class="stat-row"><span class="lbl">Nouvelles aujourd'hui</span><span class="val" id="statToday">...</span></div>
+      <div class="stat-row"><span class="lbl">Visiteurs actifs</span><span class="val" id="statVisitors">1 847</span></div>
+    </div>
+    <div class="right-ad">
+      <div class="rad-top">PUBLICITÉ</div>
+      <div class="rad-body">
+        <span class="rad-emoji">🚚</span>
+        <h3>Djib Express</h3>
+        <p>Livraison rapide en ville dès 1 500 DJF</p>
+        <button class="btn-rad" onclick="showToast('🚚 +253 77 xx xx xx')">Appeler</button>
+      </div>
+    </div>
+    <div class="right-box">
+      <div class="right-box-title">🔥 Recherches populaires</div>
+      <div class="tags-wrap">
+        <button class="pop-tag" onclick="quickSearch('iPhone')">iPhone</button>
+        <button class="pop-tag" onclick="quickSearch('Land Cruiser')">Land Cruiser</button>
+        <button class="pop-tag" onclick="quickSearch('Villa')">Villa</button>
+        <button class="pop-tag" onclick="quickSearch('Moutons')">Moutons 🐐</button>
+        <button class="pop-tag" onclick="quickSearch('Emploi')">Emploi</button>
+        <button class="pop-tag" onclick="quickSearch('Dirac')">Dirac 👗</button>
+        <button class="pop-tag" onclick="quickSearch('Samsung')">Samsung</button>
+        <button class="pop-tag" onclick="quickSearch('Moto')">Moto 🏍️</button>
+      </div>
+    </div>
+    <div class="right-ad" style="border-color:var(--gold)">
+      <div class="rad-top gold">VOTRE PUB ICI</div>
+      <div class="rad-body">
+        <span class="rad-emoji">📢</span>
+        <h3>Publiez votre pub</h3>
+        <p>Touchez des milliers de djiboutiens chaque jour</p>
+        <button class="btn-rad" onclick="openWA('Bonjour, je veux faire de la publicité sur Suuq.DJ')">Nous contacter</button>
+      </div>
+    </div>
+    <div class="right-box">
+      <div class="right-box-title">🔔 Créer une alerte</div>
+      <div class="alert-box">
+        <p>Recevez une notification dès qu'une annonce correspond à votre recherche.</p>
+        <input class="alert-input" type="text" placeholder="Ex: iPhone, Villa...">
+        <button class="btn-alert" onclick="showToast('🔔 Alerte créée — Fonctionnalité bientôt disponible !')">Créer l'alerte</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-brand-name">SUUQ<span>.DJ</span></div>
+        <p>La première marketplace djiboutienne. Achetez, vendez, échangez — tout ce dont vous avez besoin, au meilleur prix, partout à Djibouti. Publication <strong style="color:var(--gold)">100% gratuite</strong>.</p>
+        <div class="footer-apps">
+          <button class="app-btn" onclick="showToast('📱 Application Android — Bientôt disponible')">📱 Android</button>
+          <button class="app-btn" onclick="showToast('🍎 Application iOS — Bientôt disponible')">🍎 iPhone</button>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a onclick="loadAnnonces()">Accueil</a></li>
+          <li><a onclick="filterCatSide('')">Toutes les catégories</a></li>
+          <li><a onclick="openBoost()">Top annonces</a></li>
+          <li><a onclick="openPublish()">Publier une annonce</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Vendeurs</h4>
+        <ul>
+          <li><a onclick="openPublish()">Déposer une annonce</a></li>
+          <li><a onclick="openBoost()">Booster mon annonce</a></li>
+          <li><a onclick="openWA('Bonjour, je veux ouvrir une boutique pro sur Suuq.DJ')">Boutique pro</a></li>
+          <li><a onclick="openWA('Bonjour, je veux faire de la publicité sur Suuq.DJ')">Faire de la pub</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Aide & Contact</h4>
+        <ul>
+          <li><a onclick="openWA('Bonjour, j\'ai besoin d\'aide sur Suuq.DJ')">Centre d'aide</a></li>
+          <li><a onclick="showToast('📜 Conditions d\'utilisation')">Conditions d'utilisation</a></li>
+          <li><a onclick="showToast('🔒 Politique de confidentialité')">Confidentialité</a></li>
+          <li><a onclick="openWA('Bonjour Suuq.DJ !')">Nous contacter</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Suuq.DJ — Marketplace de Djibouti. Tous droits réservés.</p>
+      <p class="footer-monetize">💰 Pub & Boost : WhatsApp +253 77215151</p>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<button class="wa-float wa-pulse" onclick="openWA('Bonjour Suuq.DJ, je veux publier ou booster une annonce !')" title="Contacter sur WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</button>
+
+<!-- MODAL BOOST -->
+<div class="modal-overlay" id="boostModal">
+  <div class="modal">
+    <h2>⚡ Boostez votre annonce</h2>
+    <p class="modal-sub">Choisissez un pack pour être vu en premier par des milliers de djiboutiens.</p>
+    <div class="modal-free-note">✅ La publication est <strong>100% gratuite</strong>. Le boost est une option payante pour obtenir plus de visibilité.</div>
+    <div class="plan-card selected" id="plan1" onclick="selectPlan('plan1')">
+      <h3>🟡 Pack Starter — 3 jours</h3>
+      <div class="plan-price">500 DJF</div>
+      <p>Position TOP · Badge doré · 3× plus de vues</p>
+    </div>
+    <div class="plan-card recommended" id="plan2" onclick="selectPlan('plan2')">
+      <h3>🔴 Pack Populaire — 7 jours</h3>
+      <div class="plan-price">1 500 DJF</div>
+      <p>Position #1 · Badge URGENT · Push vers les abonnés</p>
+    </div>
+    <div class="plan-card" id="plan3" onclick="selectPlan('plan3')">
+      <h3>🔥 Pack Pro — 15 jours</h3>
+      <div class="plan-price">2 500 DJF</div>
+      <p>Position TOP 15 jours · Encart sidebar · Mise en avant accueil</p>
+    </div>
+    <div class="plan-card" id="plan4" onclick="selectPlan('plan4')">
+      <h3>⭐ Pack Premium — 30 jours</h3>
+      <div class="plan-price">4 500 DJF</div>
+      <p>Position TOP 30 jours + sidebar + newsletter + badge exclusif</p>
+    </div>
+    <button class="wa-pay-btn" onclick="payViaWA()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Payer & Confirmer sur WhatsApp
+    </button>
+    <button class="modal-cancel" onclick="closeBoost()">Annuler</button>
+  </div>
+</div>
+
+<!-- MODAL PUBLIER -->
+<div class="modal-overlay" id="publishModal">
+  <div class="pub-modal">
+    <h2>✍️ Déposer une annonce</h2>
+    <span class="free-badge-modal">✅ 100% GRATUIT</span>
+    <div class="form-group">
+      <label class="form-label">Titre de l'annonce *</label>
+      <input class="form-input" type="text" id="adTitle" placeholder="Ex: iPhone 15 Pro 256GB noir">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Catégorie *</label>
+        <select class="form-select" id="adCat">
+          <option value="">Choisir...</option>
+          <option>🚗 Véhicules</option>
+          <option>🏠 Immobilier</option>
+          <option>📱 Électronique</option>
+          <option>👗 Mode & Beauté</option>
+          <option>🛋️ Maison & Jardin</option>
+          <option>💼 Emploi</option>
+          <option>🛠️ Services</option>
+          <option>🐐 Animaux</option>
+          <option>🫙 Alimentation</option>
+          <option>⚽ Sport & Loisirs</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ville *</label>
+        <select class="form-select" id="adCity">
+          <option value="">Choisir...</option>
+          <option>Djibouti-Ville</option>
+          <option>Balbala</option>
+          <option>Ali Sabieh</option>
+          <option>Tadjourah</option>
+          <option>Obock</option>
+          <option>Dikhil</option>
+          <option>Arta</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Prix (DJF) — laisser vide si négociable</label>
+      <input class="form-input" type="number" id="adPrice" placeholder="Ex: 50000">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description *</label>
+      <textarea class="form-textarea" id="adDesc" placeholder="Décrivez votre article, son état, les détails importants..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Votre numéro WhatsApp *</label>
+      <input class="form-input" type="tel" id="adPhone" placeholder="Ex: 253 77 xx xx xx">
+    </div>
+    <div class="form-group">
+      <label class="form-label">🚀 Booster votre annonce ? <span style="color:var(--text3);font-weight:400">(optionnel)</span></label>
+      <div class="boost-option selected" id="boost0" onclick="selectBoost('boost0','Gratuit — Sans boost','0')">
+        <div class="boost-check">✓</div>
+        <div class="boost-info"><h4>🆓 Sans boost — Gratuit</h4><div class="bprice">0 DJF</div><p>Annonce publiée normalement</p></div>
+      </div>
+      <div class="boost-option" id="boost1" onclick="selectBoost('boost1','Pack Starter 3 jours','500')">
+        <div class="boost-check"></div>
+        <div class="boost-info"><h4>🟡 Pack Starter — 3 jours</h4><div class="bprice">500 DJF</div><p>Position TOP · 3× plus de vues</p></div>
+      </div>
+      <div class="boost-option" id="boost2" onclick="selectBoost('boost2','Pack Populaire 7 jours','1500')">
+        <div class="boost-check"></div>
+        <div class="boost-info"><h4>🔴 Pack Populaire — 7 jours</h4><div class="bprice">1 500 DJF</div><p>Position #1 · Badge URGENT</p></div>
+      </div>
+      <div class="boost-option" id="boost3" onclick="selectBoost('boost3','Pack Pro 15 jours','2500')">
+        <div class="boost-check"></div>
+        <div class="boost-info"><h4>🔥 Pack Pro — 15 jours</h4><div class="bprice">2 500 DJF</div><p>TOP 15 jours + sidebar</p></div>
+      </div>
+      <div class="boost-option" id="boost4" onclick="selectBoost('boost4','Pack Premium 30 jours','4500')">
+        <div class="boost-check"></div>
+        <div class="boost-info"><h4>⭐ Pack Premium — 30 jours</h4><div class="bprice">4 500 DJF</div><p>TOP 30 jours + newsletter + badge exclusif</p></div>
+      </div>
+    </div>
+    <button class="btn-submit-free" id="submitBtn" onclick="submitAd()">✅ Publier mon annonce gratuitement</button>
+    <button class="modal-cancel" style="margin-top:8px" onclick="closePublish()">Annuler</button>
+  </div>
+</div>
+
+<!-- MODAL DETAIL ANNONCE -->
+<div class="modal-overlay" id="detailModal">
+  <div class="detail-modal">
+    <div class="detail-img" id="detailImg">📦</div>
+    <div class="detail-price" id="detailPrice"></div>
+    <div class="detail-title" id="detailTitle"></div>
+    <div class="detail-meta" id="detailMeta"></div>
+    <div class="detail-desc" id="detailDesc"></div>
+    <button class="btn-contact-wa" id="detailWaBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Contacter le vendeur sur WhatsApp
+    </button>
+    <button class="modal-cancel" style="margin-top:8px" onclick="closeDetail()">Fermer</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ===== SUPABASE CONFIG =====
+  var SUPABASE_URL = 'https://dikexxapbytavavrnybv.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_GgsP3AQIvXVTHIxD7uIc3A_00ysoZ2R';
+  var WA_NUMBER   = '25377215151';
+
+  var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // ===== EMOJIS PAR CATEGORIE =====
+  var catEmojis = {
+    '🚗 Véhicules':'🚗','🏠 Immobilier':'🏠','📱 Électronique':'📱',
+    '👗 Mode & Beauté':'👗','🛋️ Maison & Jardin':'🛋️','💼 Emploi':'💼',
+    '🛠️ Services':'🛠️','🐐 Animaux':'🐐','🫙 Alimentation':'🫙',
+    '⚽ Sport & Loisirs':'⚽','💻 Informatique':'💻','Autre':'📦'
+  };
+  function getEmoji(cat) {
+    for(var k in catEmojis){ if(cat && cat.includes(k.replace(/[^a-zA-Z]/g,''))) return catEmojis[k]; }
+    for(var k in catEmojis){ if(cat === k) return catEmojis[k]; }
+    return '📦';
+  }
+  function getCatEmoji(cat) {
+    if(!cat) return '📦';
+    for(var k in catEmojis){ if(cat.startsWith(k.split(' ')[1]||'')) return catEmojis[k]; }
+    return catEmojis[cat] || '📦';
+  }
+
+  // ===== TEMPS RELATIF =====
+  function timeAgo(dateStr) {
+    var d = new Date(dateStr), now = new Date();
+    var diff = Math.floor((now - d) / 1000);
+    if(diff < 60) return 'À l\'instant';
+    if(diff < 3600) return 'Il y a ' + Math.floor(diff/60) + 'min';
+    if(diff < 86400) return 'Il y a ' + Math.floor(diff/3600) + 'h';
+    return 'Il y a ' + Math.floor(diff/86400) + 'j';
+  }
+
+  // ===== BUILD CARD =====
+  function buildCard(a) {
+    var isBoost = a.boost && a.boost !== 'gratuit';
+    var emoji = catEmojis[a.categorie] || '📦';
+    var prix = a.prix ? parseInt(a.prix).toLocaleString('fr') + ' <span class="cur">DJF</span>' : 'À négocier';
+    var badgesHtml = '';
+    if(isBoost) badgesHtml += '<span class="badge top">TOP</span>';
+    if(a.boost === 'Pack Starter 3 jours') badgesHtml += '<span class="badge new">STARTER</span>';
+    if(a.boost === 'Pack Populaire 7 jours') badgesHtml += '<span class="badge urgent">URGENT</span>';
+    if(a.boost === 'Pack Pro 15 jours') badgesHtml += '<span class="badge hot">🔥 PRO</span>';
+    if(a.boost === 'Pack Premium 30 jours') badgesHtml += '<span class="badge hot">⭐ PREMIUM</span>';
+    if(!isBoost) badgesHtml += '<span class="badge gratuit">GRATUIT</span>';
+
+    return '<article class="listing-card ' + (isBoost?'featured':'') + '" onclick="showDetail(' + JSON.stringify(a).replace(/'/g,"\\'") + ')">'
+      + '<div class="card-badges">' + badgesHtml + '</div>'
+      + '<div class="card-img">' + emoji + '</div>'
+      + '<div class="card-body">'
+      + '<div class="card-price">' + prix + '</div>'
+      + '<div class="card-title">' + (a.titre||'Sans titre') + '</div>'
+      + '<div class="card-loc">📍 ' + (a.ville||'Djibouti') + ' · ' + (a.categorie||'') + '</div>'
+      + '<div class="card-footer"><span class="card-time">' + timeAgo(a.created_at) + '</span>'
+      + '<button class="card-fav" onclick="event.stopPropagation();toggleFav(this)">🤍</button></div>'
+      + '</div></article>';
+  }
+
+  // ===== LOAD ANNONCES =====
+  var currentCat = '', currentSearch = '';
+  async function loadAnnonces() {
+    document.getElementById('topGrid').innerHTML = '<div class="loading-cards"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
+    document.getElementById('recentGrid').innerHTML = '<div class="loading-cards"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
+
+    try {
+      var query = sb.from('annonces').select('*').eq('statut','approuve').order('created_at', {ascending: false});
+      if(currentCat) query = query.eq('categorie', currentCat);
+      var ville = document.getElementById('villeFilter').value;
+      if(ville) query = query.eq('ville', ville);
+
+      var { data, error } = await query;
+      if(error) throw error;
+
+      var all = data || [];
+
+      // Filtre recherche
+      if(currentSearch) {
+        var s = currentSearch.toLowerCase();
+        all = all.filter(function(a){ return (a.titre||'').toLowerCase().includes(s) || (a.description||'').toLowerCase().includes(s); });
+      }
+
+      // Filtre prix
+      var pMin = parseInt(document.getElementById('priceMin').value)||0;
+      var pMax = parseInt(document.getElementById('priceMax').value)||Infinity;
+      if(pMin||pMax<Infinity) all = all.filter(function(a){ var p=parseInt(a.prix)||0; return p>=pMin && p<=pMax; });
+
+      // Séparer boosted / gratuit
+      var boosted = all.filter(function(a){ return a.boost && a.boost !== 'gratuit'; });
+      var recent  = all.filter(function(a){ return !a.boost || a.boost === 'gratuit'; });
+
+      // TOP grid
+      var topHtml = '';
+      if(boosted.length === 0) {
+        topHtml = '<div class="empty-state"><div>⭐</div><p>Aucune annonce boostée pour le moment.<br>Boostez la vôtre à partir de 500 DJF !</p></div>';
+      } else {
+        topHtml = '<div class="listing-grid">';
+        boosted.forEach(function(a){ topHtml += buildCard(a); });
+        topHtml += '</div>';
+      }
+      document.getElementById('topGrid').innerHTML = topHtml;
+
+      // Recent grid
+      var recentHtml = '';
+      if(recent.length === 0 && boosted.length === 0) {
+        recentHtml = '<div class="empty-state"><div>📭</div><p>Aucune annonce pour le moment.<br>Soyez le premier à publier !</p></div>';
+      } else if(recent.length === 0) {
+        recentHtml = '<div class="empty-state"><div>📭</div><p>Aucune annonce dans cette catégorie.</p></div>';
+      } else {
+        recentHtml = '<div class="listing-grid">';
+        // Insère une carte pub toutes les 5 annonces
+        recent.forEach(function(a, i){
+          recentHtml += buildCard(a);
+          if((i+1) % 5 === 0) {
+            recentHtml += '<article class="listing-card ad-card" onclick="openWA(\'Bonjour, je veux faire de la publicité sur Suuq.DJ\')">'
+              + '<div class="ad-card-inner"><div class="ad-card-tag">PUBLICITÉ</div>'
+              + '<div class="ad-card-emoji">📢</div>'
+              + '<h3>Votre pub ici</h3><p>Touchez des milliers de djiboutiens</p>'
+              + '<button class="btn-ad-card">Contacter →</button></div></article>';
+          }
+        });
+        recentHtml += '</div>';
+      }
+      document.getElementById('recentGrid').innerHTML = recentHtml;
+
+      // Stats
+      var total = all.length;
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('statTotal').textContent = total;
+      if(document.getElementById('statToday')) {
+        var today = all.filter(function(a){ return new Date(a.created_at).toDateString() === new Date().toDateString(); }).length;
+        document.getElementById('statToday').textContent = '+' + today;
+      }
+
+      // Compter par cat
+      updateCatCounts(all);
+
+    } catch(e) {
+      console.error(e);
+      document.getElementById('topGrid').innerHTML = '<div class="empty-state"><div>⚠️</div><p>Erreur de chargement. Vérifiez votre connexion.</p></div>';
+      document.getElementById('recentGrid').innerHTML = '';
+    }
+  }
+
+  function updateCatCounts(all) {
+    var map = {
+      'count-vehicules':'Véhicules','count-immo':'Immobilier','count-elec':'Électronique',
+      'count-mode':'Mode','count-maison':'Maison','count-emploi':'Emploi',
+      'count-services':'Services','count-animaux':'Animaux','count-alim':'Alimentation','count-sport':'Sport'
+    };
+    for(var id in map) {
+      var kw = map[id];
+      var n = all.filter(function(a){ return a.categorie && a.categorie.includes(kw); }).length;
+      var el = document.getElementById(id);
+      if(el) el.textContent = n;
+    }
+  }
+
+  // ===== DETAIL MODAL =====
+  function showDetail(a) {
+    if(typeof a === 'string') a = JSON.parse(a);
+    var emoji = catEmojis[a.categorie] || '📦';
+    document.getElementById('detailImg').textContent = emoji;
+    document.getElementById('detailPrice').textContent = a.prix ? parseInt(a.prix).toLocaleString('fr') + ' DJF' : 'À négocier';
+    document.getElementById('detailTitle').textContent = a.titre || 'Sans titre';
+    document.getElementById('detailMeta').innerHTML =
+      '<span class="detail-badge">📍 ' + (a.ville||'') + '</span>'
+      + '<span class="detail-badge">' + (a.categorie||'') + '</span>'
+      + '<span class="detail-badge">' + timeAgo(a.created_at) + '</span>';
+    document.getElementById('detailDesc').textContent = a.description || '';
+    var phone = a.telephone || WA_NUMBER;
+    var msg = 'Bonjour, je suis intéressé(e) par votre annonce sur Suuq.DJ : "' + a.titre + '"';
+    document.getElementById('detailWaBtn').onclick = function(){ window.open('https://wa.me/' + phone.replace(/\D/g,'') + '?text=' + encodeURIComponent(msg), '_blank'); };
+    document.getElementById('detailModal').classList.add('show');
+  }
+  function closeDetail(){ document.getElementById('detailModal').classList.remove('show'); }
+
+  // ===== SUBMIT AD =====
+  var selectedBoost = 'gratuit', selectedBoostLabel = 'Gratuit — Sans boost';
+  function selectBoost(id, label, price) {
+    document.querySelectorAll('.boost-option').forEach(function(o){
+      o.classList.remove('selected');
+      o.querySelector('.boost-check').textContent = '';
+    });
+    document.getElementById(id).classList.add('selected');
+    document.getElementById(id).querySelector('.boost-check').textContent = '✓';
+    selectedBoost = label === 'Gratuit — Sans boost' ? 'gratuit' : label;
+    selectedBoostLabel = label;
+    var btn = document.getElementById('submitBtn');
+    if(id === 'boost0'){ btn.textContent = '✅ Publier mon annonce gratuitement'; btn.style.background='var(--success)'; }
+    else { btn.textContent = '✅ Publier + Confirmer le boost sur WhatsApp'; btn.style.background='var(--wa)'; }
+  }
+
+  async function submitAd() {
+    var title = document.getElementById('adTitle').value.trim();
+    var cat   = document.getElementById('adCat').value;
+    var city  = document.getElementById('adCity').value;
+    var desc  = document.getElementById('adDesc').value.trim();
+    var phone = document.getElementById('adPhone').value.trim();
+    var price = document.getElementById('adPrice').value.trim();
+    if(!title){ showToast('⚠️ Entrez un titre'); return; }
+    if(!cat)  { showToast('⚠️ Choisissez une catégorie'); return; }
+    if(!city) { showToast('⚠️ Choisissez votre ville'); return; }
+    if(!desc) { showToast('⚠️ Ajoutez une description'); return; }
+    if(!phone){ showToast('⚠️ Entrez votre numéro WhatsApp'); return; }
+
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Publication en cours...';
+
+    try {
+      var { error } = await sb.from('annonces').insert([{
+        titre: title, categorie: cat, ville: city,
+        prix: price || null, description: desc,
+        telephone: phone, boost: selectedBoost,
+        statut: 'en_attente'
+      }]);
+      if(error) throw error;
+
+      closePublish();
+
+      if(selectedBoost !== 'gratuit') {
+        var msg = '🆕 *NOUVELLE ANNONCE SUUQ.DJ*\n\n📌 *Titre :* ' + title
+          + '\n📂 *Catégorie :* ' + cat + '\n📍 *Ville :* ' + city
+          + '\n💰 *Prix :* ' + (price ? parseInt(price).toLocaleString('fr') + ' DJF' : 'À négocier')
+          + '\n📝 *Description :* ' + desc + '\n📞 *Contact :* ' + phone
+          + '\n\n🚀 *Boost choisi :* ' + selectedBoostLabel
+          + '\n\n✅ Merci de confirmer le paiement pour activer le boost !';
+        window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+        showToast('✅ Annonce envoyée ! Confirmez le paiement boost sur WhatsApp.');
+      } else {
+        showToast('✅ Annonce soumise ! Elle sera visible après validation.');
+      }
+
+      // Reset form
+      ['adTitle','adDesc','adPhone','adPrice'].forEach(function(id){ document.getElementById(id).value=''; });
+      document.getElementById('adCat').value='';
+      document.getElementById('adCity').value='';
+      selectBoost('boost0','Gratuit — Sans boost','0');
+
+    } catch(e) {
+      console.error(e);
+      showToast('❌ Erreur : ' + (e.message || 'Réessayez'));
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // ===== BOOST MODAL =====
+  function openBoost(){ document.getElementById('boostModal').classList.add('show'); }
+  function closeBoost(){ document.getElementById('boostModal').classList.remove('show'); }
+  function selectPlan(id){
+    document.querySelectorAll('.plan-card').forEach(function(c){ c.classList.remove('selected'); });
+    document.getElementById(id).classList.add('selected');
+  }
+  function payViaWA(){
+    var sel = document.querySelector('.plan-card.selected');
+    var plan = sel ? sel.querySelector('h3').textContent : 'un pack';
+    var price = sel ? sel.querySelector('.plan-price').textContent : '';
+    var msg = 'Bonjour ! Je veux booster mon annonce sur Suuq.DJ.\n\n📦 Pack : ' + plan + '\n💰 Montant : ' + price + '\n\nMerci de me confirmer les modalités de paiement.';
+    closeBoost();
+    window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+  }
+
+  // ===== PUBLISH MODAL =====
+  function openPublish(){ document.getElementById('publishModal').classList.add('show'); }
+  function closePublish(){ document.getElementById('publishModal').classList.remove('show'); }
+
+  // ===== NAV & FILTRES =====
+  function filterCatNav(el, cat){
+    document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+    el.classList.add('active');
+    currentCat = cat;
+    loadAnnonces();
+  }
+  function filterCatSide(cat){ currentCat=cat; loadAnnonces(); }
+  function setPill(el, cat){
+    document.querySelectorAll('.cat-pill').forEach(function(p){ p.classList.remove('active'); });
+    el.classList.add('active');
+    currentCat = cat;
+    loadAnnonces();
+  }
+  function doSearch(){
+    currentSearch = document.getElementById('searchInput').value.trim();
+    loadAnnonces();
+  }
+  function quickSearch(q){ document.getElementById('searchInput').value=q; currentSearch=q; loadAnnonces(); }
+  function applyFilter(){ loadAnnonces(); }
+
+  // ===== WA =====
+  function openWA(msg){ window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank'); }
+
+  // ===== FAV =====
+  function toggleFav(btn){
+    var isFav = btn.textContent === '❤️';
+    btn.textContent = isFav ? '🤍' : '❤️';
+    showToast(isFav ? '🤍 Retiré des favoris' : '❤️ Ajouté aux favoris');
+  }
+
+  // ===== TOAST =====
+  var toastTimer;
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.style.display='block';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.style.display='none'; }, 3500);
+  }
+
+  // ===== LIVE VISITORS =====
+  var visitors = 1847;
+  setInterval(function(){
+    visitors += Math.floor(Math.random()*5)-2;
+    if(visitors<1750) visitors=1750;
+    if(visitors>2200) visitors=2200;
+    var e1=document.getElementById('visitorCount'), e2=document.getElementById('statVisitors');
+    if(e1) e1.textContent = visitors.toLocaleString('fr');
+    if(e2) e2.textContent = visitors.toLocaleString('fr');
+  }, 4000);
+
+  // ===== CLOSE ON BACKDROP =====
+  ['boostModal','publishModal','detailModal'].forEach(function(id){
+    document.getElementById(id).addEventListener('click', function(e){ if(e.target===this) this.classList.remove('show'); });
+  });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') ['boostModal','publishModal','detailModal'].forEach(function(id){ document.getElementById(id).classList.remove('show'); }); });
+  document.getElementById('searchInput').addEventListener('keydown', function(e){ if(e.key==='Enter') doSearch(); });
+
+  // ===== INIT =====
+  loadAnnonces();
+</script>
+</body>
+</html>
